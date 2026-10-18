@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4f1e9">
-  <title>奈良北コース 配送先メモ</title>
+  <title>配送先メモ</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,36 +12,81 @@
     <header class="app-header">
       <p class="eyebrow">DELIVERY NOTES</p>
       <h1>配送先検索</h1>
-      <p class="subheading">住所から配送メモをすばやく確認</p>
+      <p class="subheading">名前・住所から配送メモをすばやく確認</p>
     </header>
 
     <section id="searchScreen" class="screen">
-      <label class="field-label" for="addressSearch">住所検索</label>
+      <label class="field-label" for="searchInput">配送先を検索</label>
       <div class="search-wrap">
         <span class="search-icon" aria-hidden="true">⌕</span>
-        <input id="addressSearch" type="search" placeholder="例：奈良県奈良市大宮町" autocomplete="off" autocapitalize="off">
+        <input id="searchInput" type="search" placeholder="会社名・名前・住所を入力" autocomplete="off" autocapitalize="off">
         <button id="clearSearch" class="clear-button" type="button" aria-label="検索を消去" hidden>×</button>
       </div>
       <div class="list-heading">
-        <span>検索候補</span>
-        <span id="resultCount" class="result-count">住所を入力してください</span>
+        <span>検索結果</span>
+        <span id="resultCount" class="result-count">登録データを読み込み中</span>
       </div>
       <div id="suggestions" class="suggestions" aria-live="polite"></div>
-      <p class="search-hint">入力するたびに候補を絞り込みます。候補をタップするとメモを表示します。</p>
+      <p class="search-hint">入力するたびに候補を絞り込みます。候補をタップすると住所とメモを確認できます。</p>
     </section>
 
     <section id="detailScreen" class="screen" hidden>
-      <button id="backButton" class="back-button" type="button"><span aria-hidden="true">←</span> 検索結果に戻る</button>
-      <p class="field-label detail-label">住所</p>
-      <h2 id="detailAddress" class="detail-address"></h2>
+      <button id="backButton" class="back-button" type="button">← 検索結果に戻る</button>
+      <p class="field-label detail-label">配送先情報</p>
+      <h2 id="detailName" class="detail-name detail-title"></h2>
+      <p id="detailAddress" class="detail-address"></p>
       <article class="memo-card">
-        <h3 id="detailName" class="detail-name"></h3>
+        <h3>配送メモ</h3>
         <div id="detailMemo" class="detail-memo"></div>
       </article>
     </section>
-    <footer class="app-footer">登録件数 <span id="totalCount">0</span> 件</footer>
+
+    <section id="importScreen" class="screen" hidden>
+      <button id="importBackButton" class="back-button" type="button">← 検索画面に戻る</button>
+      <h2 class="section-title">データ取り込み</h2>
+      <p class="import-description">配送先データを貼り付けてください。貼り付けただけでは保存されません。</p>
+      <div class="format-note">
+        <strong>データ形式</strong>
+        <pre>名前：〇〇物流センター
+住所：大阪府〇〇市〇〇町1-2-3
+メモ：北側の入口から入る
+
+名前：△△商事
+住所：大阪府〇〇市〇〇町4-5-6
+メモ：裏側に荷下ろし場所あり</pre>
+        <p>配送先ごとに空行を1行入れてください。メモの中に「名前：」という文字があっても、空行がなければ別データとして扱いません。</p>
+      </div>
+      <label class="field-label" for="importText">取り込むデータ</label>
+      <textarea id="importText" rows="10" spellcheck="false" placeholder="名前：〇〇物流センター&#10;住所：大阪府〇〇市〇〇町1-2-3&#10;メモ：納品前に担当者へ連絡"></textarea>
+      <div class="button-row">
+        <button id="analyzeButton" class="primary-button" type="button">内容を確認</button>
+        <button id="clearImportButton" class="secondary-button" type="button">入力を消去</button>
+      </div>
+      <div id="analysisPanel" class="analysis-panel" hidden>
+        <h3>取り込みプレビュー</h3>
+        <div class="count-grid">
+          <div class="count-card"><span>取り込み対象件数</span><strong id="targetCount">0</strong><small>件</small></div>
+          <div class="count-card"><span>エラー件数</span><strong id="errorCount">0</strong><small>件</small></div>
+        </div>
+        <div id="errorMessages" class="error-messages" hidden></div>
+        <p id="duplicateNotice" class="duplicate-notice" hidden></p>
+        <button id="continueImportButton" class="primary-button full-button" type="button">この内容で次へ</button>
+      </div>
+      <div id="reviewPanel" class="review-panel" hidden>
+        <h3>登録・更新の確認</h3>
+        <p class="import-description">既存データと名前または住所が一致した項目があります。1件ずつ処理を選んでください。自動で上書きはしません。</p>
+        <div id="reviewItems" class="review-items"></div>
+        <button id="commitImportButton" class="primary-button full-button" type="button">選択した内容を保存</button>
+      </div>
+      <p id="importStatus" class="status-message" role="status"></p>
+    </section>
+
+    <footer class="app-footer">
+      <span>この端末の登録件数</span>
+      <strong id="totalCount">0</strong><span>件</span>
+    </footer>
+    <button id="openImportButton" class="floating-button" type="button" aria-label="データ取り込み">＋ データ取り込み</button>
   </main>
-  <script src="delivery-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
